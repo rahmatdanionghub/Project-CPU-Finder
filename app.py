@@ -63,7 +63,6 @@ st.sidebar.header("📥 Input Parameter User")
 st.sidebar.write("Masukkan kriteria CPU yang Anda butuhkan:")
 
 # Input 1: Budget/Harga (Angka/Slider)
-# Dataset asli menggunakan Dollar ($), sesuaikan nilai min/max dengan dataset lu
 user_budget = st.sidebar.number_input(
     "1. Batas Maksimal Budget Anda ($)", 
     min_value=10, 
@@ -93,7 +92,7 @@ user_speed = st.sidebar.number_input(
 # Input 4: Merek/Brand CPU (Radio Button)
 user_brand = st.sidebar.radio(
     "4. Prioritas Merek CPU", 
-    options=["All", "AMD", "Intel"] # Menambahkan opsi "All"
+    options=["All", "AMD", "Intel"]
 )
 
 # ==========================================
@@ -103,9 +102,8 @@ if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
     
     st.subheader("🔮 Hasil Analisis & Prediksi AI")
     
-    # 1. Transformasi input brand teks menjadi angka biner menggunakan LabelEncoder dari Colab
+    # 1. Transformasi input brand teks menjadi angka biner
     if user_brand == "All":
-        # Jika pilih All, pinjam encoding "Intel" buat umpan ke model AI agar tidak error
         brand_encoded = le_brand.transform(["Intel"])[0]
     else:
         try:
@@ -113,8 +111,7 @@ if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
         except ValueError:
             brand_encoded = 0
 
-    # 2. Menyusun data input sesuai urutan fitur saat training: [price, cores, speed, brand_encoded]
-    # Kita asumsikan budget user bertindak sebagai fitur penentu harga awal bagi model
+    # 2. Menyusun data input sesuai urutan fitur saat training
     fitur_input = np.array([[user_budget, user_cores, user_speed, brand_encoded]])
     
     # 3. Model memproses input melakukan prediksi (Syarat Poin 2)
@@ -123,7 +120,7 @@ if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
     # 4. Mengubah angka hasil prediksi kembali menjadi teks label asli (Syarat Poin 3)
     kategori_terprediksi = le_target.inverse_transform([prediksi_indeks])[0]
     
-# Menampilkan Hasil Prediksi Utama (UBAH BAGIAN PALING BAWAHNYA)
+    # Menampilkan Hasil Prediksi Utama
     st.markdown(f"""
     <div style="background-color:#f0f2f6; padding:20px; border-radius:10px; border-left: 8px solid #ff4b4b;">
         <h4 style="margin:0; color:#31333F;">Rekomendasi Kelas CPU Berdasarkan AI:</h4>
@@ -132,26 +129,32 @@ if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
             Model mendeteksi kombinasi Budget <b>${user_budget}</b> dengan spesifikasi <b>{user_cores} Cores / {user_speed} MHz</b> bermerek <b>{user_brand}</b> paling optimal untuk ekosistem kerja tersebut.
         </p>
     </div>
-    """, unsafe_allow_html=True) # <-- Ubah menjadi unsafe_allow_html=True
+    """, unsafe_allow_html=True)
+    
     st.markdown("### 🛒 Alternatif Produk Nyata dari Dataset")
     st.write("Berikut adalah daftar tipe prosesor asli di dalam database yang cocok dengan kriteria Anda:")
     
-    # Logika filter: Kategori Tier cocok, Brand cocok, Harga di bawah atau sama dengan budget user
+    # =========================================================================
+    # DI SINI PERUBAHANNYA: Logika filter ditambah CORES (Saklek) & SPEED (Minimal)
+    # =========================================================================
     if user_brand == "All":
-        # Jika memilih All, filter BRAND DIHILANGKAN (tampilkan semua brand)
         df_hasil_filter = df_cpu[
             (df_cpu['Kebutuhan_Tier'] == kategori_terprediksi) & 
-            (df_cpu['price'] <= user_budget)
+            (df_cpu['price'] <= user_budget) &
+            (df_cpu['cores'] == user_cores) &        # Harus pas dengan core pilihan user
+            (df_cpu['speed'] >= user_speed)          # Minimal secepat clock speed pilihan user
         ].copy()
     else:
-        # Jika memilih brand spesifik (AMD/Intel), filter seperti biasa
         df_hasil_filter = df_cpu[
             (df_cpu['Kebutuhan_Tier'] == kategori_terprediksi) & 
             (df_cpu['brand'] == user_brand) & 
-            (df_cpu['price'] <= user_budget)
+            (df_cpu['price'] <= user_budget) &
+            (df_cpu['cores'] == user_cores) &        # Harus pas dengan core pilihan user
+            (df_cpu['speed'] >= user_speed)          # Minimal secepat clock speed pilihan user
         ].copy()
+    # =========================================================================
     
-    # Urutkan berdasarkan rank performa terbaik (angka rank kecil berarti performa lebih bagus di benchmark)
+    # Urutkan berdasarkan rank performa terbaik
     df_hasil_filter = df_hasil_filter.sort_values(by='rank', ascending=True)
     
     if not df_hasil_filter.empty:
