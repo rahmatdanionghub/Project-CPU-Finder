@@ -93,7 +93,7 @@ user_speed = st.sidebar.number_input(
 # Input 4: Merek/Brand CPU (Radio Button)
 user_brand = st.sidebar.radio(
     "4. Prioritas Merek CPU", 
-    options=["AMD", "Intel"]
+    options=["All", "AMD", "Intel"] # Menambahkan opsi "All"
 )
 
 # ==========================================
@@ -104,11 +104,14 @@ if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
     st.subheader("🔮 Hasil Analisis & Prediksi AI")
     
     # 1. Transformasi input brand teks menjadi angka biner menggunakan LabelEncoder dari Colab
-    try:
-        brand_encoded = le_brand.transform([user_brand])[0]
-    except ValueError:
-        # Antisipasi jika ada teks brand yang tidak dikenali encoder
-        brand_encoded = 0 
+    if user_brand == "All":
+        # Jika pilih All, pinjam encoding "Intel" buat umpan ke model AI agar tidak error
+        brand_encoded = le_brand.transform(["Intel"])[0]
+    else:
+        try:
+            brand_encoded = le_brand.transform([user_brand])[0]
+        except ValueError:
+            brand_encoded = 0
 
     # 2. Menyusun data input sesuai urutan fitur saat training: [price, cores, speed, brand_encoded]
     # Kita asumsikan budget user bertindak sebagai fitur penentu harga awal bagi model
@@ -134,11 +137,19 @@ if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
     st.write("Berikut adalah daftar tipe prosesor asli di dalam database yang cocok dengan kriteria Anda:")
     
     # Logika filter: Kategori Tier cocok, Brand cocok, Harga di bawah atau sama dengan budget user
-    df_hasil_filter = df_cpu[
-        (df_cpu['Kebutuhan_Tier'] == kategori_terprediksi) & 
-        (df_cpu['brand'] == user_brand) & 
-        (df_cpu['price'] <= user_budget)
-    ].copy()
+    if user_brand == "All":
+        # Jika memilih All, filter BRAND DIHILANGKAN (tampilkan semua brand)
+        df_hasil_filter = df_cpu[
+            (df_cpu['Kebutuhan_Tier'] == kategori_terprediksi) & 
+            (df_cpu['price'] <= user_budget)
+        ].copy()
+    else:
+        # Jika memilih brand spesifik (AMD/Intel), filter seperti biasa
+        df_hasil_filter = df_cpu[
+            (df_cpu['Kebutuhan_Tier'] == kategori_terprediksi) & 
+            (df_cpu['brand'] == user_brand) & 
+            (df_cpu['price'] <= user_budget)
+        ].copy()
     
     # Urutkan berdasarkan rank performa terbaik (angka rank kecil berarti performa lebih bagus di benchmark)
     df_hasil_filter = df_hasil_filter.sort_values(by='rank', ascending=True)
