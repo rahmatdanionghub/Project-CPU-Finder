@@ -29,7 +29,7 @@ def load_models():
 @st.cache_data
 def load_csv_data():
     # Load dataset hasil pembersihan untuk filter rekomendasi nama produk
-    return pd.read_csv("D:\Tubes-AI-2026\data_cleaned_filtered.csv")
+    return pd.read_csv("data_cleaned_filtered.csv")
 
 # Eksekusi load data    
 try:
