@@ -8,7 +8,6 @@ import pickle
 # ==========================================
 st.set_page_config(
     page_title="CPU Smart Recommender System",
-    page_icon="💻",
     layout="wide"
 )
 
@@ -42,7 +41,7 @@ except FileNotFoundError as e:
 # ==========================================
 # HEADER & INFORMASI AKURASI (SYARAT WAJIB POIN 4)
 # ==========================================
-st.title("💻 CPU Smart Recommender System")
+st.title("CPU Smart Recommender System")
 st.subheader("Final Project AI & Big Data 2026")
 st.write("Aplikasi cerdas berbasis Machine Learning untuk menentukan kategori kebutuhan CPU berdasarkan spesifikasi dan budget Anda.")
 
@@ -59,7 +58,7 @@ st.markdown("---")
 # ==========================================
 # INTERFACE INPUT PARAMETER (SYARAT WAJIB POIN 1 - MINIMAL 4 INPUT)
 # ==========================================
-st.sidebar.header("📥 Input Parameter User")
+st.sidebar.header("Input Parameter User")
 st.sidebar.write("Masukkan kriteria CPU yang Anda butuhkan:")
 
 # Input 1: Budget/Harga (Angka/Slider)
@@ -98,9 +97,9 @@ user_brand = st.sidebar.radio(
 # ==========================================
 # PROSES PREDIKSI MACHINE LEARNING (SYARAT WAJIB POIN 2 & 3)
 # ==========================================
-if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
+if st.sidebar.button("Cari Rekomendasi CPU"):
     
-    st.subheader("🔮 Hasil Analisis & Prediksi AI")
+    st.subheader("Hasil Analisis & Prediksi AI")
     
     # 1. Transformasi input brand teks menjadi angka biner
     if user_brand == "All":
@@ -124,14 +123,14 @@ if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
     st.markdown(f"""
     <div style="background-color:#f0f2f6; padding:20px; border-radius:10px; border-left: 8px solid #ff4b4b;">
         <h4 style="margin:0; color:#31333F;">Rekomendasi Kelas CPU Berdasarkan AI:</h4>
-        <h2 style="margin:5px 0 0 0; color:#ff4b4b;">✨ {kategori_terprediksi} ✨</h2>
+        <h2 style="margin:5px 0 0 0; color:#ff4b4b;">{kategori_terprediksi}</h2>
         <p style="margin:10px 0 0 0; font-size:14px; color:#555;">
             Model mendeteksi kombinasi Budget <b>${user_budget}</b> dengan spesifikasi <b>{user_cores} Cores / {user_speed} MHz</b> bermerek <b>{user_brand}</b> paling optimal untuk ekosistem kerja tersebut.
         </p>
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("### 🛒 Alternatif Produk Nyata dari Dataset")
+    st.markdown("### Alternatif Produk Nyata dari Dataset")
     st.write("Berikut adalah daftar tipe prosesor asli di dalam database yang cocok dengan kriteria Anda:")
     
     # =========================================================================
@@ -175,8 +174,8 @@ if st.sidebar.button("🚀 Cari Rekomendasi CPU"):
         st.dataframe(tabel_tampil.head(10), use_container_width=True)
         st.caption(f"Menampilkan {min(10, len(tabel_tampil))} dari total {len(tabel_tampil)} produk alternatif yang ditemukan.")
     else:
-        st.warning("⚠️ Tidak ada produk spesifik di dalam database yang harganya di bawah budget Anda untuk spesifikasi core/speed setinggi ini. Cobalah untuk menaikkan parameter budget Anda di panel kiri.")
+        st.warning("Tidak ada produk spesifik di dalam database yang harganya di bawah budget Anda untuk spesifikasi core/speed setinggi ini. Cobalah untuk menaikkan parameter budget Anda di panel kiri.")
 
 else:
     # Tampilan awal saat web baru dibuka dan tombol belum ditekan
-    st.info("💡 Silakan sesuaikan parameter spesifikasi komputer di panel bilah kiri, kemudian klik tombol **'Cari Rekomendasi CPU'** untuk melihat hasil analisis AI!")
+    st.info("Silakan sesuaikan parameter spesifikasi komputer di panel bilah kiri, kemudian klik tombol **'Cari Rekomendasi CPU'** untuk melihat hasil analisis AI!")
