@@ -142,3 +142,5 @@ if st.sidebar.button("Cari Rekomendasi CPU"):
 
 else:
     st.info("Silakan sesuaikan parameter spesifikasi komputer di panel bilah kiri, kemudian klik tombol 'Cari Rekomendasi CPU' untuk melihat hasil analisis AI!")
+
+#adaosdokd
