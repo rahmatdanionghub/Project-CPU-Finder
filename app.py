@@ -46,7 +46,7 @@ st.sidebar.write("Masukkan kriteria CPU yang Anda butuhkan:")
 
 user_budget = st.sidebar.number_input(
     "1. Batas Maksimal Budget Anda ($)", 
-    min_value=10, 
+    min_value=0, 
     max_value=5000, 
     value=300, 
     step=10,
